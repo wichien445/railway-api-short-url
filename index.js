@@ -3,10 +3,9 @@ const mongoose = require('mongoose')
 const cors = require("cors")
 const urlRoute = require('./routes/url')
 const URL = require('./models/url')
+
 const app = express()
 require('dotenv').config()
-
-app.use(cors())
 
 // MongoDB Connection
 mongoose.connect(process.env.DATABASE, {
@@ -14,6 +13,7 @@ mongoose.connect(process.env.DATABASE, {
 }).then(()=>console.log("Connect DataBase Succeed"))
 .catch((err)=>console.console.log(err))
 
+app.use(cors())
 app.use(express.json())
 
 //Router
