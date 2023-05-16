@@ -6,6 +6,8 @@ const URL = require('./models/url')
 const app = express()
 require('dotenv').config()
 
+app.use(cors())
+
 // MongoDB Connection
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true
@@ -13,7 +15,6 @@ mongoose.connect(process.env.DATABASE, {
 .catch((err)=>console.console.log(err))
 
 app.use(express.json())
-app.use(cors())
 
 //Router
 app.use("/url", urlRoute)
