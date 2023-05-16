@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const cors = require("cors")
 const urlRoute = require('./routes/url')
 const URL = require('./models/url')
 const app = express()
@@ -12,21 +13,35 @@ mongoose.connect(process.env.DATABASE, {
 .catch((err)=>console.console.log(err))
 
 app.use(express.json())
+app.use(cors())
 
 //Router
 app.use("/url", urlRoute)
 
 app.get('/:shortId', async (req, res) => {
     const shortId = req.params.shortId
-    const entry = await URL.findOneAndUpdate({
-        shortId
-    }, {$push: {
-        visitHistory: {
-            timestamp: Date.now()
+    try {
+      const entry = await URL.findOneAndUpdate(
+        { shortId },
+        {
+          $push: {
+            visitHistory: {
+              timestamp: Date.now()
+            }
+          }
         }
-    }})
-    res.redirect(entry.redirectURL)
-})
+      )
+  
+      if (entry && entry.redirectURL) {
+        res.redirect(entry.redirectURL)
+      } else {
+        res.status(404).send('URL not found')
+      }
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Internal Server Error')
+    }
+  })
 
 //Set Port
 const port = process.env.PORT || 4000
